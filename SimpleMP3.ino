@@ -17,14 +17,14 @@
 #include "Pushbutton.h"
 
 // constants won't change. They're used here to set pin numbers ------------------------
-const int button1Pin = A0;     // the number of the pushbutton Playlist 1 pin
-const int button2Pin = A1;     // the number of the pushbutton Playlist 2 pin
-const int button3Pin = A2;     // the number of the pushbutton Playlist 3 pin
-const int button4Pin = A3;     // the number of the pushbutton Playlist 4 pin
-const int button5Pin = A4;     // the number of the pushbutton Playlist 5 pin
-const int button6Pin = A5;     // the number of the pushbutton Playlist 6 pin
-const int buttonVolDecPin = 0;      // the number of the pushbutton Volume - pin
-const int buttonVolIncPin = 1;     // the number of the pushbutton Volume + pin
+const int button1Pin = 2;     // the number of the pushbutton Playlist 1 pin
+const int button2Pin = 3;     // the number of the pushbutton Playlist 2 pin
+const int button3Pin = 4;     // the number of the pushbutton Playlist 3 pin
+const int button4Pin = 5;     // the number of the pushbutton Playlist 4 pin
+const int button5Pin = 6;     // the number of the pushbutton Playlist 5 pin
+const int button6Pin = 7;     // the number of the pushbutton Playlist 6 pin
+const int buttonVolDecPin = 8;      // the number of the pushbutton Volume - pin
+const int buttonVolIncPin = 9;     // the number of the pushbutton Volume + pin
 const int ledPin =  13;       // the number of the LED pin
 
 //Declaration ----------------------------------
@@ -76,6 +76,7 @@ void setup()
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);//----Set device we use SD as default----
 
   //----Read imformation----
+  Serial.println ("DFplayer Status");
   Serial.println(myDFPlayer.readState()); //read mp3 state
   Serial.println(myDFPlayer.readVolume()); //read current volume
   Serial.println(myDFPlayer.readEQ()); //read EQ setting
@@ -86,36 +87,46 @@ void setup()
   Serial.println(myDFPlayer.readFileCountsInFolder(3)); //read fill counts in folder SD:/03
   Serial.println(myDFPlayer.readFileCountsInFolder(4)); //read fill counts in folder SD:/04
   Serial.println(myDFPlayer.readFileCountsInFolder(5)); //read fill counts in folder SD:/05
+  Serial.println ("------------------------------------");
 }
 
 //------------------------------------------------------------
 void loop()
 {
+
   switch (ReadButtonId()){
     case 1:
       myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01.
+      Serial.print ("Folder1");
       break;
     case 2:
       myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02.
+      Serial.print ("Folder2");
       break;
     case 3:
       myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03.
+      Serial.print ("Folder3");
       break;
     case 4:
       myDFPlayer.loopFolder(4); //loop all mp3 files in folder SD:/04.
+      Serial.print ("Folder4");
       break;
     case 5:
       myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
+      Serial.print ("Folder5");
       break;
     case 6:
       myDFPlayer.loopFolder(6); //loop all mp3 files in folder SD:/06.
+      Serial.print ("Folder6");
       break;
     case 10:
       myDFPlayer.volume(15); //Volume-
+      Serial.print ("volume-");
       Serial.println(myDFPlayer.readVolume()); //read current volume
       break;
     case 11:
-      myDFPlayer.volume(301); //Volume+
+      myDFPlayer.volume(30); //Volume+
+      Serial.print ("volume+");
       Serial.println(myDFPlayer.readVolume()); //read current volume1
       break;
   }
@@ -155,6 +166,7 @@ int ReadButtonId (void){
   }
 
   //----------------------DEBUG-------------
+  /*
   int inByte=0;
   if (Serial.available() > 0) {
     // get incoming byte:
@@ -189,7 +201,7 @@ int ReadButtonId (void){
         Serial.write("vol+");
         break;
     }
-  }
+  }*/
   //----------------------END DEBUG------------- 
   return sensorVal;
 }
