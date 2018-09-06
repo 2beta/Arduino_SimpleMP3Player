@@ -1,5 +1,5 @@
 /***************************************************
- Authoer : Cedric Debetaz
+ Author : Cedric Debetaz
  Date : 08.08.2018
 
  Project:
@@ -8,8 +8,8 @@
  - debounce : https://github.com/Mokolea/InputDebounce/
 
  Version:
- 00 : Initial release
- 
+ 00 : 2018.08.08 - Initial release
+ 01 : 2018.09.05 - Change debounce library
 
  ****************************************************/
 
@@ -172,8 +172,6 @@ void loop()
 
   digitalWrite(ledPin, HIGH); // turn the LED on
 }
-
-
 
 //----Read status on DFplayer----
 void printDetail(uint8_t type, int value){
