@@ -24,7 +24,9 @@
 SoftwareSerial mySoftwareSerial(10, 11);    // RX, TX, for communication with DFPLayer
 DFRobotDFPlayerMini myDFPlayer;             // DFplayer
 void printDetail(uint8_t type, int value);  // Print some details of DFplayer module
-int Volume;                                 // Volume for Speaker
+void SerialPrint (char str1[], int value);
+void ToggleLed();
+int volume;                                 // Volume for Speaker
 
 const int ledPin = LED_BUILTIN;             // the number of the LED pin// 13;
 static const int pinSwitch1 = 2;
@@ -45,46 +47,6 @@ static InputDebounce buttonTest6;
 static InputDebounce buttonTest7;
 static InputDebounce buttonTest8;
 
-//---------------------------------------------------
-void buttonTest_pressedCallback(uint8_t pinIn)
-{
-  switch (pinIn){
-      case 2:
-        myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01.
-        Serial.print ("Folder1");
-        break;
-      case 3:
-        myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02.
-        Serial.print ("Folder2");
-        break;
-      case 4:
-        myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03.
-        Serial.print ("Folder3");
-        break;
-      case 5:
-        myDFPlayer.loopFolder(4); //loop all mp3 files in folder SD:/04.
-        Serial.print ("Folder4");
-        break;
-      case 6:
-        myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
-        Serial.print ("Folder5");
-        break;
-      case 7:
-        myDFPlayer.loopFolder(6); //loop all mp3 files in folder SD:/06.
-        Serial.print ("Folder6");
-        break;
-      case 8:
-        myDFPlayer.volume(15); //Volume-
-        Serial.print ("volume-");
-        Serial.println(myDFPlayer.readVolume()); //read current volume
-        break;
-      case 9:
-        myDFPlayer.volume(30); //Volume+
-        Serial.print ("volume+");
-        Serial.println(myDFPlayer.readVolume()); //read current volume1
-        break;
-    }
-}
 
 //-----------------------------------------------------
 void setup()
@@ -117,6 +79,8 @@ void setup()
     
   Serial.println();
   Serial.println(F("Simple MP3 for my children"));
+  Serial.println("**************************");
+  Serial.println();
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
   if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
@@ -129,49 +93,130 @@ void setup()
 
   //----Set paramters----
   myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms
-  myDFPlayer.volume(10);  //Set volume value (0~30).
+  myDFPlayer.volume(15);  //Set volume value (0~30).
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL); //----Set different EQ----
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);//----Set device we use SD as default----
 
   //----Read imformation----
-  Serial.println ("DFplayer Status -------------------");
-  Serial.println(myDFPlayer.readState()); //read mp3 state
-  Serial.println(myDFPlayer.readVolume()); //read current volume
-  Serial.println(myDFPlayer.readEQ()); //read EQ setting
-  Serial.println(myDFPlayer.readFileCounts()); //read all file counts in SD card
-  Serial.println(myDFPlayer.readCurrentFileNumber()); //read current play file number
-  Serial.println(myDFPlayer.readFileCountsInFolder(1)); //read fill counts in folder SD:/01
-  Serial.println(myDFPlayer.readFileCountsInFolder(2)); //read fill counts in folder SD:/02
-  Serial.println(myDFPlayer.readFileCountsInFolder(3)); //read fill counts in folder SD:/03
-  Serial.println(myDFPlayer.readFileCountsInFolder(4)); //read fill counts in folder SD:/04
-  Serial.println(myDFPlayer.readFileCountsInFolder(5)); //read fill counts in folder SD:/05
-  Serial.println ("------------------------------------");
+  Serial.println ("---------------- DFplayer Status -------------------");
+  SerialPrint("state = ", myDFPlayer.readState()); //read mp3 state
+  SerialPrint("Volume = ",myDFPlayer.readVolume()); //read current volume
+  SerialPrint("EQ = ",myDFPlayer.readEQ()); //read EQ setting
+  SerialPrint("File counts = ",myDFPlayer.readFileCounts()); //read all file counts in SD card
+  SerialPrint("Current play file number =",myDFPlayer.readCurrentFileNumber()); //read current play file number
+  SerialPrint("file counts in folder SD:/01 = ",myDFPlayer.readFileCountsInFolder(1)); //read file counts in folder SD:/01
+  SerialPrint("file counts in folder SD:/02 = ",myDFPlayer.readFileCountsInFolder(2)); //read file counts in folder SD:/02
+  SerialPrint("file counts in folder SD:/03 = ",myDFPlayer.readFileCountsInFolder(3)); //read file counts in folder SD:/03
+  SerialPrint("file counts in folder SD:/04 = ",myDFPlayer.readFileCountsInFolder(4)); //read file counts in folder SD:/04
+  SerialPrint("file counts in folder SD:/05 = ",myDFPlayer.readFileCountsInFolder(5)); //read file counts in folder SD:/05
+  SerialPrint("file counts in folder SD:/06 = ",myDFPlayer.readFileCountsInFolder(6)); //read file counts in folder SD:/06
+  Serial.println ("---------------------------------------------------");
 }
 
 //------------------------------------------------------------
 void loop()
 {
-  //-------------------------------------------------------!!!!!
   unsigned long now = millis();
   
   // poll button state
   buttonTest1.process(now); // callbacks called in context of this function
   buttonTest2.process(now);
-  buttonTest3.process(now); // callbacks called in context of this function
+  buttonTest3.process(now);
   buttonTest4.process(now);
-  buttonTest5.process(now); // callbacks called in context of this function
+  buttonTest5.process(now);
   buttonTest6.process(now);
-  buttonTest7.process(now); // callbacks called in context of this function
+  buttonTest7.process(now);
   buttonTest8.process(now);
-  delay(1); // [ms]
-  //---------------------------------------------------!!!!!
   
   if (myDFPlayer.available()) {
     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
   }
 
-  digitalWrite(ledPin, HIGH); // turn the LED on
+  // Led for status
+  int dfStatus = myDFPlayer.readState();
+  //SerialPrint("Dfstatus = ",dfStatus);
+  if(dfStatus==512){//state wait
+    digitalWrite(ledPin, Toggle());
+  }
+  else if(dfStatus==-1){//state error
+    digitalWrite(ledPin, Toggle());
+  }
+  else if(dfStatus==513){//read mp3
+    digitalWrite(ledPin, true);
+  }
 }
+
+
+//---------------------------------------------------
+void SerialPrint (char Str1[], int value)
+{
+   Serial.print(Str1);
+   Serial.println(value);
+}
+
+//-----------------------------------------------------
+bool Toggle (void){
+  static unsigned long   ulPreviousMillis = 0;        // will store last time
+  const long lInterval = 250;           // interval at wich to stay in config mode (milliseconds)
+  static bool bToggle;
+
+  if (millis() - ulPreviousMillis >= lInterval){
+    ulPreviousMillis=millis();
+    bToggle=!bToggle;
+  }
+  return bToggle;
+}
+
+
+//---------------------------------------------------
+void buttonTest_pressedCallback(uint8_t pinIn)
+{
+  switch (pinIn){
+      case 2:
+        myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01.
+        SerialPrint ("Folder1, pin= ",pinIn);
+        break;
+      case 3:
+        myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02.
+        SerialPrint ("Folder2, pin= ",pinIn);
+        break;
+      case 4:
+        myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03.
+        SerialPrint ("Folder3, pin= ",pinIn);
+        break;
+      case 5:
+        myDFPlayer.loopFolder(4); //loop all mp3 files in folder SD:/04.
+        SerialPrint ("Folder4, pin= ",pinIn);
+        break;
+      case 6:
+        myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
+        SerialPrint ("Folder5, pin= ",pinIn);
+        break;
+      case 7:
+        myDFPlayer.loopFolder(6); //loop all mp3 files in folder SD:/06.
+        SerialPrint ("Folder6, pin= ",pinIn);
+        break;
+      case 8:
+        volume=myDFPlayer.readVolume();
+        if (volume>=3){
+          volume-=3;
+          myDFPlayer.volume(volume);
+        }
+        SerialPrint ("Volume-, volume = ",volume);
+        break;
+      case 9:
+        volume=myDFPlayer.readVolume();
+        if (volume<=27){
+          volume+=3;
+          myDFPlayer.volume(volume);
+        }
+        SerialPrint ("Volume+, volume = ",volume);
+        break;
+    }
+}
+
+
+
 
 //----Read status on DFplayer----
 void printDetail(uint8_t type, int value){
