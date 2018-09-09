@@ -10,6 +10,7 @@
  Version:
  00 : 2018.08.08 - Initial release
  01 : 2018.09.05 - Change debounce library
+ 02 : 2018.09.09 - play next song if already in the folder
 
  ****************************************************/
 
@@ -21,14 +22,19 @@
 #define BUTTON_DEBOUNCE_DELAY   100   // [ms]
 
 // Declaration ------------------------------------------------------
-SoftwareSerial mySoftwareSerial(10, 11);    // RX, TX, for communication with DFPLayer
-DFRobotDFPlayerMini myDFPlayer;             // DFplayer
 void printDetail(uint8_t type, int value);  // Print some details of DFplayer module
 void SerialPrint (char str1[], int value);
 void ToggleLed();
-int volume;                                 // Volume for Speaker
 
-const int ledPin = LED_BUILTIN;             // the number of the LED pin// 13;
+SoftwareSerial mySoftwareSerial(10, 11);    // RX, TX, for communication with DFPLayer
+DFRobotDFPlayerMini myDFPlayer;             // DFplayer
+
+int volume;                                 // Volume for Speaker
+int folder;                                 // Actual folder
+unsigned long now;                          // Actual time
+int dfStatus;                               // Status of the dfplayer
+
+const int ledPin = LED_BUILTIN;             // the number of the LED pin // 13;
 static const int pinSwitch1 = 2;
 static const int pinSwitch2 = 3;
 static const int pinSwitch3 = 4;
@@ -111,12 +117,28 @@ void setup()
   SerialPrint("file counts in folder SD:/05 = ",myDFPlayer.readFileCountsInFolder(5)); //read file counts in folder SD:/05
   SerialPrint("file counts in folder SD:/06 = ",myDFPlayer.readFileCountsInFolder(6)); //read file counts in folder SD:/06
   Serial.println ("---------------------------------------------------");
+
+  folder = 0;
+  
 }
 
 //------------------------------------------------------------
 void loop()
 {
-  unsigned long now = millis();
+  now = millis();
+
+  // Led for status
+  dfStatus = myDFPlayer.readState();
+  //SerialPrint("Dfstatus = ",dfStatus);
+  if(dfStatus==512){//state wait
+    digitalWrite(ledPin, Toggle());
+  }
+  else if(dfStatus==-1){//state error
+    digitalWrite(ledPin, Toggle());
+  }
+  else if(dfStatus==513){//read mp3
+    digitalWrite(ledPin, true);
+  }
   
   // poll button state
   buttonTest1.process(now); // callbacks called in context of this function
@@ -132,18 +154,7 @@ void loop()
     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
   }
 
-  // Led for status
-  int dfStatus = myDFPlayer.readState();
-  //SerialPrint("Dfstatus = ",dfStatus);
-  if(dfStatus==512){//state wait
-    digitalWrite(ledPin, Toggle());
-  }
-  else if(dfStatus==-1){//state error
-    digitalWrite(ledPin, Toggle());
-  }
-  else if(dfStatus==513){//read mp3
-    digitalWrite(ledPin, true);
-  }
+
 }
 
 
@@ -172,29 +183,77 @@ bool Toggle (void){
 void buttonTest_pressedCallback(uint8_t pinIn)
 {
   switch (pinIn){
-      case 2:
-        myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01.
-        SerialPrint ("Folder1, pin= ",pinIn);
+      case 2: // Folder 1
+        if (folder==1){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 1, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 1
+          myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01.
+          SerialPrint ("Play folder 1, pin= ",pinIn);
+        }
+        folder=1;
         break;
-      case 3:
-        myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02.
-        SerialPrint ("Folder2, pin= ",pinIn);
+      case 3: // Folder 2
+        if (folder==2){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 2, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 2
+          myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02.
+          SerialPrint ("Play folder 2, pin= ",pinIn);
+        }
+        folder=2;
         break;
-      case 4:
-        myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03.
-        SerialPrint ("Folder3, pin= ",pinIn);
+      case 4: // Folder 3
+        if (folder==3){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 3, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 3
+          myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03.
+          SerialPrint ("Play folder 3, pin= ",pinIn);
+        }
+        folder=3;
         break;
-      case 5:
-        myDFPlayer.loopFolder(4); //loop all mp3 files in folder SD:/04.
-        SerialPrint ("Folder4, pin= ",pinIn);
+      case 5: // Folder 4
+        if (folder==4){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 4, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 4
+          myDFPlayer.loopFolder(4); //loop all mp3 files in folder SD:/04.
+          SerialPrint ("Play folder 4, pin= ",pinIn);
+        }
+        folder=4;
         break;
-      case 6:
-        myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
-        SerialPrint ("Folder5, pin= ",pinIn);
+      case 6: // Folder 5
+        if (folder==5){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 5, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 5
+          myDFPlayer.loopFolder(5); //loop all mp3 files in folder SD:/05.
+          SerialPrint ("Play folder 5, pin= ",pinIn);
+        }
+        folder=5;
         break;
-      case 7:
-        myDFPlayer.loopFolder(6); //loop all mp3 files in folder SD:/06.
-        SerialPrint ("Folder6, pin= ",pinIn);
+      case 7: // Folder 6
+        if (folder==6){ // next song
+          myDFPlayer.next(); //next song.
+          SerialPrint ("Next in folder 6, pin= ",pinIn);
+          SerialPrint ("File read = ", myDFPlayer.readCurrentFileNumber());
+        }
+        else { // play folder 6
+          myDFPlayer.loopFolder(6); //loop all mp3 files in folder SD:/06.
+          SerialPrint ("Play folder 6, pin= ",pinIn);
+        }
+        folder=6;
         break;
       case 8:
         volume=myDFPlayer.readVolume();
@@ -218,7 +277,7 @@ void buttonTest_pressedCallback(uint8_t pinIn)
 
 
 
-//----Read status on DFplayer----
+//----Read status on DFplayer-------------------------------
 void printDetail(uint8_t type, int value){
   switch (type) {
     case TimeOut:
