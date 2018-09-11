@@ -4,7 +4,8 @@
 Simple MP3 player for my children, with Arduino Uno and dfplayer modul.
 -----------------------------------------------------------------------
 
-"Simple" is a word for the children not for the code. The goal is to have 6 collored buttons, each button start a specific play list.
+"Simple" is a word children side not for code side :). 
+The goal is to have 6 collored buttons, each button start a specific play list.
 
 
 1) Libraries:
