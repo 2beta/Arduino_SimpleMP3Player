@@ -21,3 +21,4 @@ need 2 libraries (could be installed via Arduino IDE LIbrary Manager)
 - 1x Battery charger
 - 1x speaker 3W (4-8Ohm)
 - some wires
+- 1x wood box
