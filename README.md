@@ -31,17 +31,17 @@ Simple MP3 player for my children, with Arduino Uno and dfplayer modul.
 3) uSD card folder structure
 
 
->- 01
+> - 01
 >  - 0001.mp3
 >  - 0002.mp3
 >  - 0003.mp3
 >  - ...
->- 02
+> - 02
 >  - or 0001_MySong.mp3
 >  - or 0002_MyOtherSong.mp3 
 >  - ...
->- 03
->- 04
->- 05
->- 06
+> - 03
+> - 04
+> - 05
+> - 06
 
