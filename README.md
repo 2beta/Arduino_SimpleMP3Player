@@ -19,4 +19,5 @@ need 2 libraries (could be installed via Arduino IDE LIbrary Manager)
 - 1x resistance 1kOhm
 - 1x Battery 18650
 - 1x Battery charger
+- 1x speaker 3W (4-8Ohm)
 - some wires
