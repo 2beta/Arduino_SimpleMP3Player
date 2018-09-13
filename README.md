@@ -1,14 +1,14 @@
 # SimpleMP3Player
 
 
-Simple MP3 player for my children, with Arduino Uno and dfplayer modul.
------------------------------------------------------------------------
-
-"Simple" is a word children side not for code side :). 
-The goal is to have 6 collored buttons, each button start a specific play list.
+## Simple MP3 player for my children, with Arduino Uno and dfplayer modul.
 
 
-1) Libraries:
+The word "Simple" is children side not code side :). 
+The goal is to have 6 collored buttons, each button start a specific play list. (2 more buttons for volume)
+
+
+## Libraries:
 
 - need 2 libraries (could be installed via Arduino IDE LIbrary Manager)
 
@@ -16,7 +16,7 @@ The goal is to have 6 collored buttons, each button start a specific play list.
   - Mokolea, InputDebounce : https://github.com/Mokolea/InputDebounce/
 
 
-2) Bill of materials:
+## Bill of materials:
 
 - 1x Arduino  Uno
 - 1x Dfplayer from Dfrobot
@@ -29,7 +29,7 @@ The goal is to have 6 collored buttons, each button start a specific play list.
 - some wires
 - 1x wood box
 
-3) uSD card folder structure
+## uSD card folder structure
 
 
 - 01
